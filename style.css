@@ -1,0 +1,186 @@
+html, body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: .5em;
+  font-family: sans-serif;
+}
+
+body > header {
+  font-size: 1.25em;
+  font-weight: bold;
+  line-height: 1.25em;
+  margin-bottom: 2em;
+  color: dimgray;
+}
+
+body > header > span {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  line-height: 1em;
+  margin-left: 0;
+  margin-right: 0;
+}
+body > header > span:nth-child(1) {
+  background-color: gainsboro;
+}
+body > header > span:nth-child(2) {
+  background-color: darkgray;
+}
+body > header > span:nth-child(3) {
+  background-color: dimgray;
+  margin-right: .5em;
+}
+
+body > section {
+  display: flex;
+}
+
+.user-inputs, .zones, .measurements {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-inputs {
+  margin-left: 2em;
+}
+.zones {
+  margin-left: 3em;
+}
+
+.user-inputs {
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.user-inputs > select {
+  min-width: 8em;
+  height: 3em;
+  font-size: 1em;
+  font-weight: bold;
+  color: black;
+}
+
+.zones > div {
+  width: 2em;
+  height: 2em;
+  line-height: 2em;
+  border: 2px solid gray;
+  text-align: center;
+  margin: 1px;
+}
+
+.measurements > div {
+  min-width: 5.5rem;
+  height: 2em;
+  line-height: 2em;
+  border: 2px solid transparent;
+  text-align: left;
+  margin: 1px;
+}
+
+.measurements > div.measured, .measurements > div.midpoint.measured {
+  cursor: pointer;
+}
+.measurements > div.measured::after, .measurements > div.midpoint.measured::after {
+  content: "x";
+  display: inline-block;
+  padding: .05rem;
+  height: .875rem;
+  width: .875rem;
+  line-height: .8rem;
+  vertical-align: .1rem;
+  margin-left: .25rem;
+  font-size: 1rem;
+  font-weight: normal;
+  text-align: center;
+  color: crimson;
+  border: solid 1px crimson;
+  cursor: pointer;
+}
+
+.zones > div.outside-zone {
+  border: 2px solid orangered;
+  color: orangered;
+}
+.zones > div.outside-zone.red-zone {
+  background-color: crimson;
+  color: white;
+}
+
+.zones > div.min, .zones > div.max {
+  border: 2px solid orangered;
+}
+
+.zones > div.midpoint {
+  width: 2.25em;
+  height: 2.25em;
+  line-height: 2.25em;
+  font-size: 1.1em;
+  font-weight: bold;
+  border-color: green;
+  border-width: 2px;
+}
+
+.measurements > div.midpoint {
+  height: 2.25em;
+  line-height: 2.25em;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: green;
+}
+
+.btn {
+  min-width: 6.25em;
+  margin-top: .25em;
+  padding: .5em .75em;
+  background-color: green;
+  color: white;
+  font-weight: bold;
+  border-radius: .25em;
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: #ddd;
+  border-right-color: #222;
+  border-bottom-color: #222;
+  border-left-color: #ddd;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn:active {
+  border-top-color: #222;
+  border-right-color: #ddd;
+  border-bottom-color: #ddd;
+  border-left-color: #222;
+}
+
+.btn.darker {
+  background-color: #333;
+  color: white;
+  margin-top: 5em;
+}
+.btn.lighter {
+  background-color: #eee;
+  color: black;
+  margin-top: 1em;
+}
+.btn.reset {
+  background-color: gray;
+  color: white;
+  margin-top: 1em;
+}
+
+.btn.del {
+  background-color: #CC5500;
+  color: white;
+  margin-top: 1em;
+}
+
+.btn.del-all {
+  background-color: darkred;
+  color: white;
+  margin-top: 1em;
+}
