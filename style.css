@@ -56,7 +56,7 @@ body > section {
 }
 
 .user-inputs > select {
-  min-width: 8em;
+  min-width: 8.25em;
   height: 3em;
   font-size: 1em;
   font-weight: bold;
@@ -133,7 +133,7 @@ body > section {
 }
 
 .btn {
-  min-width: 6.25em;
+  min-width: 6.5em;
   margin-top: .25em;
   padding: .5em .75em;
   background-color: green;
