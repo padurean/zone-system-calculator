@@ -70,6 +70,7 @@ body > section {
   border: 2px solid gray;
   text-align: center;
   margin: 1px;
+  cursor: help;
 }
 
 .measurements > div {
@@ -114,6 +115,9 @@ body > section {
 
 .zones > div.min, .zones > div.max {
   border: 2px solid orangered;
+}
+.zones > div.almost-min, .zones > div.almost-max {
+  border: 2px solid orange;
 }
 
 .zones > div.midpoint {

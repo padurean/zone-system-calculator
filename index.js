@@ -235,9 +235,17 @@ function renderInitialZonesAndMeasurements() {
         zoneDiv.classList.add("min");
         measurementDiv.classList.add("min");
         break;
+      case 1:
+        zoneDiv.classList.add("almost-min");
+        measurementDiv.classList.add("almost-min");
+        break;
       case config.midpointPosition:
         zoneDiv.classList.add("midpoint");
         measurementDiv.classList.add("midpoint");
+        break;
+      case config.nbZones-2:
+        zoneDiv.classList.add("almost-max");
+        measurementDiv.classList.add("almost-max");
         break;
       case config.nbZones-1:
         zoneDiv.classList.add("max");
