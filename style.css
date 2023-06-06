@@ -23,13 +23,13 @@ body > header > span {
   margin-right: 0;
 }
 body > header > span:nth-child(1) {
-  background-color: gainsboro;
+  background-color: dimgray;
 }
 body > header > span:nth-child(2) {
   background-color: darkgray;
 }
 body > header > span:nth-child(3) {
-  background-color: dimgray;
+  background-color: gainsboro;
   margin-right: .5em;
 }
 
