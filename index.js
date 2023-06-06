@@ -20,6 +20,20 @@ const allExposureTimes = [
   "1/16000",
 ];
 
+const zonesTooltips = [
+  "Pure black - no detail",
+  "Near black, with slight tonality but no texture",
+  "Textured black; the darkest part of the image in which slight detail is recorded",
+  "Average dark materials and low values showing adequate texture",
+  "Average dark foliage, dark stone, or landscape shadows",
+  "Middle gray: clear north sky; dark skin, average weathered wood",
+  "Average Caucasian skin; light stone; shadows on snow in sunlit landscapes",
+  "Very light skin; shadows in snow with acute side lighting",
+  "Lightest tone with texture: textured snow",
+  "Slight tone without texture; glaring snow",
+  "Pure white: light sources and specular reflections - paper white, no detail",
+]
+
 const config = {
   defaultShutter: "1/125",
   maxNbMeasurements: 5,
@@ -120,6 +134,11 @@ window.addEventListener("load", (event) => {
   state.init();
   renderInitialUserInputs();
   renderInitialZonesAndMeasurements();
+  document.addEventListener("click", (event) => {
+    document.querySelectorAll('.tooltiptext').forEach(function(tooltipElem) {
+      tooltipElem.classList.remove("visible");
+    });
+  });
 });
 
 function renderInitialUserInputs() {
@@ -186,12 +205,12 @@ function createBtnElem(classList, innerHTML, listener) {
 function renderInitialZonesAndMeasurements() {
   let minusZoneDiv = document.createElement("div");
   minusZoneDiv.innerText = "-0";
-  minusZoneDiv.classList.add("outside-zone");
+  minusZoneDiv.classList.add("outside-zone-minus");
   state.elems.zones.appendChild(minusZoneDiv);
 
   let plusZoneDiv = document.createElement("div");
   plusZoneDiv.innerText = "+0";
-  plusZoneDiv.classList.add("outside-zone");
+  plusZoneDiv.classList.add("outside-zone-plus");
 
   let minusMeasurementDiv = document.createElement("div");
   state.elems.measurements.appendChild(minusMeasurementDiv);
@@ -210,6 +229,7 @@ function renderInitialZonesAndMeasurements() {
     zoneDiv.innerText = zone;
     zoneDiv.style.backgroundColor = backgroundColor;
     zoneDiv.style.color = color;
+    zoneDiv.classList.add("tooltip");
     switch (zone) {
       case 0:
         zoneDiv.classList.add("min");
@@ -225,11 +245,40 @@ function renderInitialZonesAndMeasurements() {
         break;
     }
 
+    let zoneTooltip = document.createElement("span");
+    zoneTooltip.innerText = zonesTooltips[zone];
+    zoneTooltip.classList.add("tooltiptext");
+    zoneDiv.appendChild(zoneTooltip);
+    zoneDiv.addEventListener("click", onZoneClick);
+    zoneTooltip.addEventListener("click", onZoneTooltipClick);
+
     state.elems.zones.appendChild(zoneDiv);
     state.elems.zones.appendChild(plusZoneDiv);
     state.elems.measurements.appendChild(measurementDiv);
     state.elems.measurements.appendChild(plusMeasurementDiv);
   }
+}
+
+function onZoneClick(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  document.querySelectorAll('.tooltiptext').forEach(function(tooltipElem) {
+    if (!event.target.children[0].isEqualNode(tooltipElem)) {
+      tooltipElem.classList.remove("visible");
+    }
+  });
+  event.target.children[0].classList.toggle("visible");
+}
+
+function onZoneTooltipClick(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  document.querySelectorAll('.tooltiptext').forEach(function(tooltipElem) {
+    if (!event.target.isEqualNode(tooltipElem)) {
+      tooltipElem.classList.remove("visible");
+    }
+  });
+  event.target.classList.toggle("visible");
 }
 
 function renderMeasurementsPositions() {
@@ -269,7 +318,6 @@ function renderMeasurementsPositions() {
     }
     if (underexposure < 0) {
       let zoneElem = state.elems.zones.children[pos+1];
-      zoneElem.classList.add("red-zone");
       zoneElem.innerText = underexposure;
       underexposed = true;
       break;
@@ -277,7 +325,6 @@ function renderMeasurementsPositions() {
   }
   if (underexposed == 0) {
     state.elems.zones.children[0].innerText = "-0";
-    state.elems.zones.children[0].classList.remove("red-zone");
   }
 
   // render lights
@@ -295,7 +342,6 @@ function renderMeasurementsPositions() {
     measurementElem.addEventListener("click", onMeasurementClick);
     if (overexposure > 0) {
       let zoneElem = state.elems.zones.children[pos+1];
-      zoneElem.classList.add("red-zone");
       zoneElem.innerText = "+" + overexposure;
       overexposed = true;
       break;
@@ -303,7 +349,6 @@ function renderMeasurementsPositions() {
   }
   if (overexposed == 0) {
     state.elems.zones.children[state.elems.zones.children.length-1].innerText = "+0";
-    state.elems.zones.children[state.elems.zones.children.length-1].classList.remove("red-zone");
   }
 }
 

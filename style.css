@@ -101,13 +101,15 @@ body > section {
   cursor: pointer;
 }
 
-.zones > div.outside-zone {
+.zones > div.outside-zone-minus {
+  border: 2px solid orangered;
+  color: hsl(16, 100%, 65%);
+  background-color: black;
+}
+.zones > div.outside-zone-plus {
   border: 2px solid orangered;
   color: orangered;
-}
-.zones > div.outside-zone.red-zone {
-  background-color: crimson;
-  color: white;
+  background-color: white;
 }
 
 .zones > div.min, .zones > div.max {
@@ -183,4 +185,38 @@ body > section {
   background-color: darkred;
   color: white;
   margin-top: 1em;
+}
+
+.tooltip {
+  position: relative;
+}
+.tooltip > .tooltiptext {
+  visibility: hidden;
+  position: absolute;
+  z-index: 1;
+  width: 12rem;
+  bottom: 110%;
+  left: 50%;
+  margin-left: -6rem;
+  background-color: rgba(0, 0, 0, .75);
+  color: #fff;
+  text-align: center;
+  font-size: .8rem;
+  font-weight: normal;
+  line-height: 1.25rem;
+  padding: .25rem .5rem;
+  border-radius: .25rem;
+}
+.tooltip .tooltiptext::after {
+  position: absolute;
+  content: " ";
+  top: 100%;
+  left: 46.5%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+.tooltip > .tooltiptext.visible {
+  visibility: visible;
 }
