@@ -37,10 +37,18 @@ body > section {
   display: flex;
 }
 
-.user-inputs, .zones, .measurements {
+.hidden {
+  display: none !important;
+}
+
+.loading, .user-inputs, .zones, .measurements {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.loading {
+  color: gray;
 }
 
 .user-inputs {

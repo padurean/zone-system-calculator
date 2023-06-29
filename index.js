@@ -139,6 +139,7 @@ window.addEventListener("load", (event) => {
       tooltipElem.classList.remove("visible");
     });
   });
+  document.getElementById("loading").classList.add("hidden");
 });
 
 function renderInitialUserInputs() {
