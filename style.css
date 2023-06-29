@@ -41,6 +41,21 @@ body > section {
   display: none !important;
 }
 
+#bmc-wbtn {
+  width: 40px !important;
+  height: 40px !important;
+}
+#bmc-wbtn > img {
+  width: 28px !important;
+  height: 28px !important;
+}
+#bmc-wbtn + div {
+  right: 60px !important;
+  padding: 12px !important;
+  max-width: 220px !important;
+  font-size: 16px !important;
+}
+
 .loading, .user-inputs, .zones, .measurements {
   display: flex;
   flex-direction: column;
