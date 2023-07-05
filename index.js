@@ -1,3 +1,8 @@
+const measurementKindSeconds = "Seconds";
+const measurementKindAperture = "Aperture";
+const measurementKindISO = "ISO";
+const measurementKinds = [ measurementKindSeconds, measurementKindAperture, measurementKindISO ];
+
 const allExposureTimes = [
   "16",
   "8",
@@ -20,6 +25,76 @@ const allExposureTimes = [
   "1/16000",
 ];
 
+const allApertureValues = [
+  "0.7",
+  "0.8",
+  "1.0",
+  "1.2",
+  "1.4",
+  "1.7",
+  "2",
+  "2.4",
+  "2.8",
+  "3.3",
+  "4",
+  "4.8",
+  "5.6",
+  "6.7",
+  "8",
+  "9.5",
+  "11",
+  "13",
+  "16",
+  "19",
+  "22",
+  "27",
+  "32",
+  "38",
+  "45",
+  "54",
+  "64",
+  "76",
+  "90",
+  "107",
+  "128"
+];
+
+const allISOValues = [
+  "102400",
+  "51200",
+  "25600",
+  "20000",
+  "16000",
+  "12800",
+  "10000",
+  "8000",
+  "6400",
+  "5000",
+  "4000",
+  "3200",
+  "2500",
+  "2000",
+  "1600",
+  "1250",
+  "1000",
+  "800",
+  "640",
+  "500",
+  "400",
+  "320",
+  "250",
+  "200",
+  "160",
+  "125",
+  "100",
+  "80",
+  "64",
+  "50",
+  "40",
+  "32",
+  "25"
+];
+
 const zonesTooltips = [
   "Pure black - no detail",
   "Near black, with slight tonality but no texture",
@@ -36,6 +111,8 @@ const zonesTooltips = [
 
 const config = {
   defaultShutter: "1/125",
+  defaultAperture: "8",
+  defaultISO: "100",
   maxNbMeasurements: 5,
   nbZones: 11,
 
@@ -48,10 +125,14 @@ const config = {
 const state = {
   elems: {
     userInputs: null,
+    selectMeasurementKind: null,
     selectShutter: null,
+    selectAperture: null,
+    selectISO: null,
     zones: null,
     measurements: null
   },
+  measurementKind: measurementKindSeconds,
   measurements: [],
   measurementsParsed: [],
   measurementsPositions: [],
@@ -67,9 +148,15 @@ const state = {
     this.measurements.sort((a, b) => {
       let aa = eval(a);
       let bb = eval(b);
+      if (state.measurementKind === measurementKindAperture) {
+        return aa - bb;
+      }
       return bb - aa;
     });
     this.measurementsParsed.sort((a, b) => {
+      if (state.measurementKind === measurementKindAperture) {
+        return a - b;
+      }
       return b - a;
     });
   },
@@ -92,8 +179,15 @@ const state = {
     }
     this.sortMeasurements();
 
-    let globalPosDarkest = allExposureTimes.indexOf(this.measurements[0]);
-    let globalPosBrightest = allExposureTimes.indexOf(this.measurements[this.measurements.length-1]);
+    let allValues = allExposureTimes;
+    if (state.measurementKind === measurementKindAperture) {
+      allValues = allApertureValues;
+    } else if (state.measurementKind === measurementKindISO) {
+      allValues = allISOValues;
+    }
+
+    let globalPosDarkest = allValues.indexOf(this.measurements[0]);
+    let globalPosBrightest = allValues.indexOf(this.measurements[this.measurements.length-1]);
     let meanDistanceDarkestToBrightest = Math.floor((globalPosBrightest-globalPosDarkest)/2);
     let globalPosMidpoint = globalPosDarkest+meanDistanceDarkestToBrightest;
 
@@ -105,8 +199,8 @@ const state = {
     let midpointIsMeasured = startPos == config.midpointPosition;
     this.measurementsPositions = [{ position: startPos, value: this.measurements[0] }];
     for (let i = 1; i < this.measurements.length; i++) {
-      let globalPosPrev = allExposureTimes.indexOf(this.measurements[i-1]);
-      let globalPosCurr = allExposureTimes.indexOf(this.measurements[i]);
+      let globalPosPrev = allValues.indexOf(this.measurements[i-1]);
+      let globalPosCurr = allValues.indexOf(this.measurements[i]);
       let gap = globalPosCurr - globalPosPrev;
       let prev = this.measurementsPositions[i-1]
       let curr = {position: prev.position+gap, value: this.measurements[i]}
@@ -119,14 +213,22 @@ const state = {
     if (!midpointIsMeasured) {
       let midpoint = { position: config.midpointPosition, value: "-", computed: true };
       let globalPosMidpointShifted = globalPosMidpoint-this.userShift;
-      if (globalPosMidpointShifted >= 0 && globalPosMidpointShifted < allExposureTimes.length) {
-        midpoint.value = allExposureTimes[globalPosMidpoint-this.userShift];
+      if (globalPosMidpointShifted >= 0 && globalPosMidpointShifted < allValues.length) {
+        midpoint.value = allValues[globalPosMidpoint-this.userShift];
       }
       this.measurementsPositions.push(midpoint);
     }
 
     this.sortMeasurementsPositions();
   },
+}
+
+function show(elem) {
+  elem.classList.remove("hidden");
+}
+
+function hide(elem) {
+  elem.classList.add("hidden");
 }
 
 window.addEventListener("load", (event) => {
@@ -147,8 +249,14 @@ function renderInitialUserInputs() {
 }
 
 function renderInitialMeasurementsInput() {
-  let selectAndLabel = createSelectElem(
-    "select-measurement", allExposureTimes, config.defaultShutter, "Measured Tv:", onSelectShutterChange);
+  let measurementKindSelectAndLbl = createSelectElem(
+    "select-measurement-kind", ["Seconds", "Aperture", "ISO"], "Seconds", "Measured values:", onSelectMeasurementKindChange);
+  let shutterSelectAndLbl = createSelectElem(
+    "select-measurement-speed", allExposureTimes, config.defaultShutter, "", onSelectShutterChange);
+  let apertureSelectAndLbl = createSelectElem(
+    "select-measurement-aperture", allApertureValues, config.defaultAperture, "", onSelectApertureChange);
+  let isoSelectAndLbl = createSelectElem(
+      "select-measurement-iso", allISOValues, config.defaultISO, "", onSelectISOChange);
 
   let addBtn = createBtnElem(["add"], "&plus; Add", onAddBtnClick);
   let delBtn = createBtnElem(["del"], "&minus; Remove", onDelBtnClick);
@@ -157,9 +265,19 @@ function renderInitialMeasurementsInput() {
   let lighterBtn = createBtnElem(["lighter"], "&#8681; Lighter", onLighterBtnClick);
   let resetShiftBtn = createBtnElem(["reset"], "&olarr; Reset", onResetShiftBtnClick);
 
-  state.elems.userInputs.appendChild(selectAndLabel[1]);
-  state.elems.userInputs.appendChild(selectAndLabel[0]);
-  state.elems.selectShutter = selectAndLabel[0];
+  state.elems.userInputs.appendChild(measurementKindSelectAndLbl[1]);
+  state.elems.userInputs.appendChild(measurementKindSelectAndLbl[0]);
+  state.elems.selectMeasurementKind = measurementKindSelectAndLbl[0];
+
+  state.elems.userInputs.appendChild(shutterSelectAndLbl[0]);
+  state.elems.selectShutter = shutterSelectAndLbl[0];
+  hide(apertureSelectAndLbl[0]);
+  state.elems.userInputs.appendChild(apertureSelectAndLbl[0]);
+  state.elems.selectAperture = apertureSelectAndLbl[0];
+  hide(isoSelectAndLbl[0]);
+  state.elems.userInputs.appendChild(isoSelectAndLbl[0]);
+  state.elems.selectISO = isoSelectAndLbl[0];
+
   state.elems.userInputs.appendChild(addBtn);
   state.elems.userInputs.appendChild(delBtn);
   state.elems.userInputs.appendChild(delAllBtn);
@@ -187,11 +305,16 @@ function createSelectElem(id, values, selectedValue, label, listener) {
     select.addEventListener("change", listener);
   }
 
-  let selectLabel = document.createElement("label");
-  selectLabel.setAttribute("for", id);
-  selectLabel.innerText = label;
+  let selectAndLabel = [select];
 
-  return [select, selectLabel];
+  if (label !== "") {
+    let selectLabel = document.createElement("label");
+    selectLabel.setAttribute("for", id);
+    selectLabel.innerText = label;
+    selectAndLabel.push(selectLabel);
+  }
+
+  return selectAndLabel;
 }
 
 function createBtnElem(classList, innerHTML, listener) {
@@ -361,7 +484,49 @@ function renderMeasurementsPositions() {
   }
 }
 
+function delAllMeasurements() {
+  state.measurements = [];
+  state.measurementsParsed = [];
+  state.userShift = 0;
+  state.computeMeasurementsPositions();
+  renderMeasurementsPositions();
+}
+
+function onSelectMeasurementKindChange(event) {
+  let prevMeasurementKind = state.measurementKind;
+  let newMeasurementKind = state.elems.selectMeasurementKind.value;
+  if (newMeasurementKind === prevMeasurementKind) {
+    return
+  }
+
+  delAllMeasurements();
+
+  let elemToHide = state.elems.selectShutter;
+  if (prevMeasurementKind === measurementKindAperture) {
+    elemToHide = state.elems.selectAperture;
+  } else if (prevMeasurementKind === measurementKindISO) {
+    elemToHide = state.elems.selectISO;
+  }
+  hide(elemToHide);
+
+  let elemToShow = state.elems.selectShutter;
+  if (newMeasurementKind === measurementKindAperture) {
+    elemToShow = state.elems.selectAperture;
+  } else if (newMeasurementKind === measurementKindISO) {
+    elemToShow = state.elems.selectISO;
+  }
+  show(elemToShow);
+
+  state.measurementKind = newMeasurementKind;
+}
+
 function onSelectShutterChange(event) {
+  addMeasurement();
+};
+function onSelectApertureChange(event) {
+  addMeasurement();
+};
+function onSelectISOChange(event) {
   addMeasurement();
 };
 
@@ -372,6 +537,11 @@ function onAddBtnClick(event) {
 
 function addMeasurement() {
   let measurement = state.elems.selectShutter.value;
+  if (state.measurementKind === measurementKindAperture) {
+    measurement = state.elems.selectAperture.value;
+  } else if (state.measurementKind === measurementKindISO) {
+    measurement = state.elems.selectISO.value;
+  }
   if (state.measurements.indexOf(measurement) >= 0) {
     return
   }
@@ -388,7 +558,13 @@ function addMeasurement() {
 
 function onDelBtnClick(event) {
   event.preventDefault();
-  removeMeasurement(state.elems.selectShutter.value);
+  let measurement = state.elems.selectShutter.value;
+  if (state.measurementKind === measurementKindAperture) {
+    measurement = state.elems.selectAperture.value;
+  } else if (state.measurementKind === measurementKindISO) {
+    measurement = state.elems.selectISO.value;
+  }
+  removeMeasurement(measurement);
 }
 
 function onMeasurementClick(event) {
@@ -413,11 +589,7 @@ function removeMeasurement(measurement) {
 
 function onDelAllBtnClick(event) {
   event.preventDefault();
-  state.measurements = [];
-  state.measurementsParsed = [];
-  state.userShift = 0;
-  state.computeMeasurementsPositions();
-  renderMeasurementsPositions();
+  delAllMeasurements();
 }
 
 function onDarkerBtnClick(event) {

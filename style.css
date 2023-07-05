@@ -79,11 +79,20 @@ body > section {
 }
 
 .user-inputs > select {
-  min-width: 8.25em;
-  height: 3em;
   font-size: 1em;
+  min-width: 8.25em;
+  height: 2em;
+  margin-top: .25em;
   font-weight: bold;
   color: black;
+}
+
+.user-inputs > label[for=select-measurement-kind]
+{
+  font-size: .95em;
+  margin-top: -.25em;
+  font-weight: bold;
+  color: dimgray;
 }
 
 .zones > div {
@@ -163,7 +172,7 @@ body > section {
 
 .btn {
   min-width: 6.5em;
-  margin-top: .25em;
+  margin-top: .75em;
   padding: .5em .75em;
   background-color: green;
   color: white;
@@ -189,29 +198,25 @@ body > section {
 .btn.darker {
   background-color: #333;
   color: white;
-  margin-top: 5em;
+  margin-top: 4em;
 }
 .btn.lighter {
   background-color: #eee;
   color: black;
-  margin-top: 1em;
 }
 .btn.reset {
   background-color: gray;
   color: white;
-  margin-top: 1em;
 }
 
 .btn.del {
   background-color: #CC5500;
   color: white;
-  margin-top: 1em;
 }
 
 .btn.del-all {
   background-color: darkred;
   color: white;
-  margin-top: 1em;
 }
 
 .tooltip {
